@@ -4,3 +4,8 @@
 
 /.vs
 /MarlinCSharp/.vs/MarlinCSharp/v15
+/MarlineGUI/.vs/MarlineGUI/v15
+/MarlineGUI/MarlineGUI/bin/Debug
+/MarlineGUI/MarlineGUI/obj/Debug
+/MarlineGUI/MrlineCSharpNet/bin/Debug
+/MarlineGUI/MrlineCSharpNet/obj/Debug

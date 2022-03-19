@@ -1,11 +1,11 @@
-﻿using MarlinCSharp.Communication.Exception;
+﻿using MarlinCSharpNet.Communication.Exception;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Ports;
 using System.Text;
 
-namespace MarlinCSharp.Communication
+namespace MarlinCSharpNet.Communication
 {
     public class SerialConnection : Connection
     {

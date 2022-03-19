@@ -5,7 +5,7 @@ using System.IO;
 using System.IO.Ports;
 using System.Text;
 
-namespace MarlinCSharp.Communication
+namespace MarlinCSharpNet.Communication
 {
     public abstract class Connection
     {

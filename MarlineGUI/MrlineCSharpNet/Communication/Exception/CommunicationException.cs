@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace MarlinCSharp.Communication.Excaptoin
+namespace MarlinCSharpNet.Communication.Exception
 {
-    public class CommunicationException : Exception
+    public class CommunicationException : System.Exception
     {
         public CommunicationException(string v) : base(v)
         {

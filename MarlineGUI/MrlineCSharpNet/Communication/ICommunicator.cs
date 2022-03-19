@@ -1,9 +1,9 @@
-﻿using MarlinCSharp.GCode;
+﻿using MarlinCSharpNet.GCode;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace MarlinCSharp.Communication
+namespace MarlinCSharpNet.Communication
 {
     public interface ICommunicator
     {

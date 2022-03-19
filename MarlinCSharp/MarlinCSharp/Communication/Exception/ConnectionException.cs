@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace MarlinCSharp.Communication.Excaptoin
+namespace MarlinCSharp.Communication.Exception
 {
     public class ConnectionException : CommunicationException
     {

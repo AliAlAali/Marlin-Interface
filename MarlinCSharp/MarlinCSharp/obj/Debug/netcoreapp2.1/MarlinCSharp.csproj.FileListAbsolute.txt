@@ -1,6 +1,15 @@
 C:\Users\PC_KhanSenpi\source\repos\Marlin-Interface\MarlinCSharp\MarlinCSharp\bin\Debug\netcoreapp2.1\MarlinCSharp.deps.json
 C:\Users\PC_KhanSenpi\source\repos\Marlin-Interface\MarlinCSharp\MarlinCSharp\bin\Debug\netcoreapp2.1\MarlinCSharp.dll
-C:\Users\PC_KhanSenpi\source\repos\Marlin-Interface\MarlinCSharp\MarlinCSharp\obj\Debug\netcoreapp2.1\MarlinCSharp.csprojAssemblyReference.cache
 C:\Users\PC_KhanSenpi\source\repos\Marlin-Interface\MarlinCSharp\MarlinCSharp\obj\Debug\netcoreapp2.1\MarlinCSharp.csproj.CoreCompileInputs.cache
 C:\Users\PC_KhanSenpi\source\repos\Marlin-Interface\MarlinCSharp\MarlinCSharp\obj\Debug\netcoreapp2.1\MarlinCSharp.AssemblyInfoInputs.cache
 C:\Users\PC_KhanSenpi\source\repos\Marlin-Interface\MarlinCSharp\MarlinCSharp\obj\Debug\netcoreapp2.1\MarlinCSharp.AssemblyInfo.cs
+C:\Users\PC_KhanSenpi\source\repos\Marlin-Interface\MarlinCSharp\MarlinCSharp\bin\Debug\netcoreapp2.1\MarlinCSharp.pdb
+C:\Users\PC_KhanSenpi\source\repos\Marlin-Interface\MarlinCSharp\MarlinCSharp\bin\Debug\netcoreapp2.1\Calculator.dll
+C:\Users\PC_KhanSenpi\source\repos\Marlin-Interface\MarlinCSharp\MarlinCSharp\bin\Debug\netcoreapp2.1\HelixToolkit.dll
+C:\Users\PC_KhanSenpi\source\repos\Marlin-Interface\MarlinCSharp\MarlinCSharp\bin\Debug\netcoreapp2.1\HelixToolkit.Wpf.dll
+C:\Users\PC_KhanSenpi\source\repos\Marlin-Interface\MarlinCSharp\MarlinCSharp\bin\Debug\netcoreapp2.1\Calculator.xml
+C:\Users\PC_KhanSenpi\source\repos\Marlin-Interface\MarlinCSharp\MarlinCSharp\bin\Debug\netcoreapp2.1\HelixToolkit.xml
+C:\Users\PC_KhanSenpi\source\repos\Marlin-Interface\MarlinCSharp\MarlinCSharp\bin\Debug\netcoreapp2.1\HelixToolkit.Wpf.xml
+C:\Users\PC_KhanSenpi\source\repos\Marlin-Interface\MarlinCSharp\MarlinCSharp\obj\Debug\netcoreapp2.1\MarlinCSharp.csproj.CopyComplete
+C:\Users\PC_KhanSenpi\source\repos\Marlin-Interface\MarlinCSharp\MarlinCSharp\obj\Debug\netcoreapp2.1\MarlinCSharp.dll
+C:\Users\PC_KhanSenpi\source\repos\Marlin-Interface\MarlinCSharp\MarlinCSharp\obj\Debug\netcoreapp2.1\MarlinCSharp.pdb

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace MarlinCSharp.GCode
+namespace MarlinCSharpNet.GCode
 {
     public class GCodeCommand
     {

@@ -1,12 +1,12 @@
-﻿using MarlinCSharp.Communication.Exception;
-using MarlinCSharp.GCode;
+﻿using MarlinCSharpNet.Communication.Exception;
+using MarlinCSharpNet.GCode;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 
-namespace MarlinCSharp.Communication
+namespace MarlinCSharpNet.Communication
 {
     /// <summary>
     /// Class for supporing communication between a Marline Machine and a connection

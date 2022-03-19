@@ -8,4 +8,23 @@
     <PackageReference Include="System.IO.Ports" Version="6.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="Calculator">
+      <HintPath>P:\API\OpenCNCPilot-master\OpenCNCPilot\bin\Debug\Calculator.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="HelixToolkit">
+      <HintPath>P:\API\OpenCNCPilot-master\OpenCNCPilot\bin\Debug\HelixToolkit.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="HelixToolkit.Wpf">
+      <HintPath>P:\API\OpenCNCPilot-master\OpenCNCPilot\bin\Debug\HelixToolkit.Wpf.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Util\" />
+  </ItemGroup>
+
 </Project>
