@@ -21,7 +21,6 @@ namespace MarlinCSharpNet.Communication
         Queue toSend = Queue.Synchronized(new Queue());
         Queue ToSendP = Queue.Synchronized(new Queue());
 
-        public event Action<string> OnResponseReceived;
 
         public BufferedCommunicator()
         {
@@ -37,11 +36,12 @@ namespace MarlinCSharpNet.Communication
 
                 while (true)
                 {
+                    
                     Task<string> lineTask = Reader.ReadLineAsync();
 
                     while (!lineTask.IsCompleted)
                     {
-                        if (!Connection.IsOpen())
+                        if (!Connection.IsOpen() || Paused)
                         {
                             return;
                         }
@@ -67,8 +67,7 @@ namespace MarlinCSharpNet.Communication
                     }
 
                     string response = lineTask.Result;
-                    OnResponseReceived?.Invoke(response);
-
+                    RaiseOnResponseReceived(response);
                 }
 
             }
@@ -101,6 +100,13 @@ namespace MarlinCSharpNet.Communication
         public override void Disconnect()
         {
             base.Disconnect();
+            WorkerThread.Join();
+            ClearQueue();
+        }
+
+        public override void Halt()
+        {
+            base.Halt();
             WorkerThread.Join();
             ClearQueue();
         }

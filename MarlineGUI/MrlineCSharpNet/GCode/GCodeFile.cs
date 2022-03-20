@@ -1,5 +1,4 @@
-﻿using HelixToolkit.Wpf;
-using OpenCNCPilot.GCode.GCodeCommands;
+﻿using OpenCNCPilot.GCode.GCodeCommands;
 using OpenCNCPilot.Util;
 using System;
 using System.Collections.Generic;

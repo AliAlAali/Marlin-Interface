@@ -16,6 +16,10 @@ namespace MarlinCSharpNet.Communication
 
         void Disconnect();
 
+        void Pause();
+        void Halt();
+        void Resume();
+
         void DispatchCommand(GCodeCommand command);
 
         void SendCommand(GCodeCommand command);

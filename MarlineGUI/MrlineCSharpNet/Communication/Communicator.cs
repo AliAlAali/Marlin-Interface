@@ -15,6 +15,10 @@ namespace MarlinCSharpNet.Communication
     {
         public Connection Connection { get; set; }
 
+        public bool Paused { get; set; } = false;
+
+        public event Action<string> OnResponseReceived;
+
         public enum SerialCommunicatorEvent
         {
             COMMAND_SENT,
@@ -33,6 +37,10 @@ namespace MarlinCSharpNet.Communication
             EventThread = new Thread(this.Process);
         }
 
+        protected void RaiseOnResponseReceived(string response)
+        {
+            OnResponseReceived?.Invoke(response);
+        }
 
         private void Process()
         {
@@ -61,7 +69,7 @@ namespace MarlinCSharpNet.Communication
 
         public virtual void Connect()
         {
-            if(Connection != null)
+            if(Connection != null && !Connection.IsOpen())
             {
                 Connection.Connect();
                 InitalizeThread();
@@ -69,7 +77,7 @@ namespace MarlinCSharpNet.Communication
             }
             else
             {
-                throw new CommunicationException("Could not connect, since connection is null");
+                throw new CommunicationException("Could not connect, since connection is either open or null");
             }
         }
 
@@ -80,6 +88,11 @@ namespace MarlinCSharpNet.Communication
 
         public virtual void Disconnect()
         {
+            if(Connection == null || !Connection.IsOpen())
+            {
+                return;
+            }
+
             Stop = true;
             EventThread.Interrupt();
             Connection.Close();
@@ -98,6 +111,21 @@ namespace MarlinCSharpNet.Communication
         public virtual void SendPrioityCommand(string command)
         {
             throw new NotImplementedException();
+        }
+
+        public void Pause()
+        {
+            Paused = true;
+        }
+
+        public virtual void Halt()
+        {
+            Paused = true;
+        }
+
+        public void Resume()
+        {
+            Paused = false;
         }
 
         // Simple data class used to pass data to the event thread.
