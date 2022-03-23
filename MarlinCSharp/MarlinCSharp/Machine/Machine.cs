@@ -10,19 +10,37 @@ namespace MarlinCSharp.Machine
     {
         public Communicator Communicator { get; set; }
 
+        public int FeedRate { get; set; } = 1;
+
         public void Connect()
         {
-            if (Communicator.IsConnected())
-            {
-                return;
-            }
-
-            Communicator.Connect();
+            Communicator?.Connect();
         }
+
+        public void Disconnect()
+        {
+            Communicator?.Disconnect();
+        }
+
+        public void Pause()
+        {
+            Communicator?.Pause();
+        }
+
+        public void Resume()
+        {
+            Communicator?.Resume();
+        }
+
+        public void Stop()
+        {
+            Communicator?.Halt();
+        }
+
 
         public void Execute(GCodeCommand command)
         {
-            if (Communicator.IsConnected())
+            if (!Communicator.IsConnected())
             {
                 return;
             }
@@ -32,7 +50,7 @@ namespace MarlinCSharp.Machine
 
         public void ExecutePriority(string command)
         {
-            if (Communicator.IsConnected())
+            if (!Communicator.IsConnected())
             {
                 return;
             }
@@ -42,10 +60,11 @@ namespace MarlinCSharp.Machine
 
         public void Execute(GCodeFileReader reader)
         {
-            foreach(var command in reader)
+            foreach (var command in reader)
             {
                 Execute(command);
             }
         }
+
     }
 }

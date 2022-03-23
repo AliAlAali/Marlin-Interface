@@ -16,7 +16,7 @@ namespace MarlinCSharp.Communication
 
         public override void Close()
         {
-            if(Port != null)
+            if (Port != null)
             {
                 Port.DataReceived -= OnDataReceived;
                 Port.Close();
@@ -70,7 +70,7 @@ namespace MarlinCSharp.Communication
 
         public override void OnDataReceived(object sender, SerialDataReceivedEventArgs e)
         {
-            if(e.EventType != SerialData.Eof)
+            if (e.EventType != SerialData.Eof)
             {
                 return;
             }

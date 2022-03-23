@@ -13,3 +13,4 @@ C:\Users\PC_KhanSenpi\source\repos\Marlin-Interface\MarlinCSharp\MarlinCSharp\bi
 C:\Users\PC_KhanSenpi\source\repos\Marlin-Interface\MarlinCSharp\MarlinCSharp\obj\Debug\netcoreapp2.1\MarlinCSharp.csproj.CopyComplete
 C:\Users\PC_KhanSenpi\source\repos\Marlin-Interface\MarlinCSharp\MarlinCSharp\obj\Debug\netcoreapp2.1\MarlinCSharp.dll
 C:\Users\PC_KhanSenpi\source\repos\Marlin-Interface\MarlinCSharp\MarlinCSharp\obj\Debug\netcoreapp2.1\MarlinCSharp.pdb
+C:\Users\PC_KhanSenpi\source\repos\Marlin-Interface\MarlinCSharp\MarlinCSharp\obj\Debug\netcoreapp2.1\MarlinCSharp.csprojAssemblyReference.cache
