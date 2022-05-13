@@ -34,6 +34,9 @@ namespace MarlinCSharpNet.Communication
                 Writer = new StreamWriter(stream);
                 Reader = new StreamReader(stream);
 
+                Writer.Write("M110");
+                Writer.Flush();
+
                 while (true)
                 {
                     
@@ -41,7 +44,7 @@ namespace MarlinCSharpNet.Communication
 
                     while (!lineTask.IsCompleted)
                     {
-                        if (!Connection.IsOpen() || Paused)
+                        if (!Connection.IsOpen())
                         {
                             return;
                         }
@@ -53,13 +56,14 @@ namespace MarlinCSharpNet.Communication
                             Writer.Flush();
                         }
 
-                        if(toSend.Count > 0)
+                        if(toSend.Count > 0 && !Paused)
                         {
                             var command = toSend.Dequeue();
                             Writer.Write(command.ToString());
                             Writer.Write("\n");
                             Writer.Flush();
 
+                            Paused = true;
                             Sent.Enqueue(command);
                             Thread.Sleep(10);
                         }

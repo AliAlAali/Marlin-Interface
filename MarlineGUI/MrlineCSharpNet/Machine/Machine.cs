@@ -59,7 +59,11 @@ namespace MarlinCSharpNet.Machine
             Communicator.SendPrioityCommand(command);
         }
 
-        public void Execute(GCodeFileReader reader)
+        public void ExecutePriority(GCodeCommand command)
+        {
+            ExecutePriority(command.ToString());
+        }
+            public void Execute(GCodeFileReader reader)
         {
             foreach(var command in reader)
             {

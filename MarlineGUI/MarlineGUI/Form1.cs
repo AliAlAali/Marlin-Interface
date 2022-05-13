@@ -89,5 +89,10 @@ namespace MarlineGUI
         {
             Machine.Execute(new GCodeCommand() { Command = "G0 X40" });
         }
+
+        private void Btn_pause_Click(object sender, EventArgs e)
+        {
+            Machine.Pause();
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using MarlinCSharp.Communication.Exception;
 using MarlinCSharp.GCode;
+using MarlinCSharp.Machine;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -16,6 +17,8 @@ namespace MarlinCSharp.Communication
         public Connection Connection { get; set; }
 
         public bool Paused { get; set; } = false;
+
+        public MachineStatus Status { get; set; } = MachineStatus.Manual;
 
         public event Action<string> OnResponseReceived;
 
@@ -59,7 +62,16 @@ namespace MarlinCSharp.Communication
             }
         }
 
-        public void Reset()
+        protected virtual void ClearQueue()
+        {
+        }
+
+        public void Clear()
+        {
+            ClearQueue();
+        }
+
+        public virtual void Reset()
         {
             if (EventQueue != null)
             {
@@ -116,16 +128,24 @@ namespace MarlinCSharp.Communication
         public void Pause()
         {
             Paused = true;
+            Status = MachineStatus.Manual;
         }
 
         public virtual void Halt()
         {
             Paused = true;
+            Status = MachineStatus.Manual;
         }
 
         public void Resume()
         {
             Paused = false;
+            Status = MachineStatus.Operating;
+        }
+
+        public virtual bool IsEmpty()
+        {
+            throw new NotImplementedException();
         }
 
         // Simple data class used to pass data to the event thread.

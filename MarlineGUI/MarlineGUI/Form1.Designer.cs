@@ -39,6 +39,7 @@
             this.LSTB_response = new System.Windows.Forms.ListBox();
             this.Btn_x_pos = new System.Windows.Forms.Button();
             this.Btn_x_neg = new System.Windows.Forms.Button();
+            this.Btn_pause = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // CCBox_ports
@@ -112,11 +113,22 @@
             this.Btn_x_neg.UseVisualStyleBackColor = true;
             this.Btn_x_neg.Click += new System.EventHandler(this.Btn_x_neg_Click);
             // 
+            // Btn_pause
+            // 
+            this.Btn_pause.Location = new System.Drawing.Point(333, 111);
+            this.Btn_pause.Name = "Btn_pause";
+            this.Btn_pause.Size = new System.Drawing.Size(75, 23);
+            this.Btn_pause.TabIndex = 7;
+            this.Btn_pause.Text = "Pause";
+            this.Btn_pause.UseVisualStyleBackColor = true;
+            this.Btn_pause.Click += new System.EventHandler(this.Btn_pause_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(636, 410);
+            this.Controls.Add(this.Btn_pause);
             this.Controls.Add(this.Btn_x_neg);
             this.Controls.Add(this.Btn_x_pos);
             this.Controls.Add(this.LSTB_response);
@@ -141,6 +153,7 @@
         private System.Windows.Forms.ListBox LSTB_response;
         private System.Windows.Forms.Button Btn_x_pos;
         private System.Windows.Forms.Button Btn_x_neg;
+        private System.Windows.Forms.Button Btn_pause;
     }
 }
 

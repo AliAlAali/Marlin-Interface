@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using MarlinCSharp.GCode;
+using MarlinCSharp.Machine;
 
 namespace MarlinCSharp.Communication
 {
@@ -17,11 +18,13 @@ namespace MarlinCSharp.Communication
         private StreamReader Reader;
         private Thread WorkerThread;
 
-        Queue Sent = Queue.Synchronized(new Queue());
+        List<GCodeCommand> Sent = new List<GCodeCommand>();
         Queue toSend = Queue.Synchronized(new Queue());
         Queue ToSendP = Queue.Synchronized(new Queue());
 
-        public event Action<string> OnResponseReceived;
+        private int LineNumber = 1;
+        private int ResendFrom = -1;
+
 
         public BufferedCommunicator()
         {
@@ -29,14 +32,20 @@ namespace MarlinCSharp.Communication
 
         private void Work()
         {
+            Stream stream = null;
             try
             {
-                var stream = Connection.GetStream();
+                stream = Connection.GetStream();
                 Writer = new StreamWriter(stream);
                 Reader = new StreamReader(stream);
 
+                Writer.Write("M110 N0");
+                Writer.Flush();
+
+
                 while (true)
                 {
+                    Thread.Sleep(1); // Cause thread to block for a tiny amount => allows interrupts
                     Task<string> lineTask = Reader.ReadLineAsync();
 
                     while (!lineTask.IsCompleted)
@@ -46,50 +55,119 @@ namespace MarlinCSharp.Communication
                             return;
                         }
 
-                        while(ToSendP.Count > 0)
+                        while (ToSendP.Count > 0)
                         {
                             var commandP = ToSendP.Dequeue();
                             Writer.Write(commandP.ToString());
+                            Writer.Write("\n");
                             Writer.Flush();
                         }
 
-                        while(toSend.Count > 0)
+                        if(ResendFrom != -1 && ResendFrom < LineNumber && Status == MachineStatus.Operating)
                         {
-                            var command = toSend.Dequeue();
-                            Writer.Write(command.ToString());
+                            if(ResendFrom < Sent.Count)
+                            {
+                                // Detect a racing condition, commit suicide
+                                //Thread.Sleep(1000);
+                            }
+                            var command = Sent[ResendFrom - 1];
+                            Writer.Write(command.GetCheckedCommand(ResendFrom));
                             Writer.Write("\n");
                             Writer.Flush();
 
-                            Sent.Enqueue(command);
+                            RaiseOnResponseReceived($"Resent command {command} #{ResendFrom}");
+
+                            ResendFrom++;
+                            Thread.Sleep(10);
+                        }
+                        else if (toSend.Count > 0 && Status == MachineStatus.Operating)
+                        {
+                            ResendFrom = -1;
+                            var command = toSend.Dequeue() as GCodeCommand;
+                            Writer.Write(command.GetCheckedCommand(LineNumber));
+                            Writer.Write("\n");
+                            Writer.Flush();
+
+                            Sent.Add(command);
+                            RaiseOnResponseReceived($"Send command {command} #{LineNumber}");
+                            LineNumber++;
+
+                            Thread.Sleep(50);
                         }
 
-                        Thread.Sleep(10);
                     }
 
                     string response = lineTask.Result;
-                    OnResponseReceived.Invoke(response);
+                    RaiseOnResponseReceived(response);
+
+                    // Handle error or resend command requests
+                    if (response.ToLower().StartsWith("resend"))
+                    {
+                        int startNum = response.IndexOf(":");
+                        string num = response.Substring(startNum + 2);
+                        int target = int.Parse(num);
+                        ResendFrom = target;
+                        Thread.Sleep(50);
+                    }
                 }
 
             }
-            catch (System.Exception)
+            catch(ThreadInterruptedException thiex)
             {
+                //Writer.Close();
+                //Writer = null;
+                //Reader.Close();
+                //Reader = null;
+
+                //stream.Close();
+                //stream = null;
+
+                // Read all stream to avoid reading old messages
+              
+
+                LineNumber = 1;
+                ResendFrom = -1;
+                ClearQueue();
+
+                // After clearing the queue
+                //SendPrioityCommand("M110 -1"); //Reset line number
 
             }
+            catch (System.Exception ex)
+            {
+                var debug = 5;
+            }
+            
         }
 
-        private void ClearQueue()
+
+        protected override void ClearQueue()
         {
             toSend.Clear();
             ToSendP.Clear();
             Sent.Clear();
         }
 
+        public override void Reset()
+        {
+            base.Reset();
+            //ResendFrom = -1;
+            //ClearQueue();
+            WorkerThread.Interrupt();
+            WorkerThread.Join();
+            WorkerThread = new Thread(Work)
+            {
+                Priority = ThreadPriority.AboveNormal
+            };
+            WorkerThread.Start();
+        }
+
         public override void Connect()
         {
             base.Connect();
-            ClearQueue();
+            //ClearQueue();
 
-          
+
             WorkerThread = new Thread(Work)
             {
                 Priority = ThreadPriority.AboveNormal
@@ -102,6 +180,26 @@ namespace MarlinCSharp.Communication
             base.Disconnect();
             WorkerThread.Join();
             ClearQueue();
+        }
+
+        public override void Halt()
+        {
+            base.Halt();
+            WorkerThread.Interrupt();
+            WorkerThread.Join();
+            //ResendFrom = -1;
+            //ClearQueue();
+
+            WorkerThread = new Thread(Work)
+            {
+                Priority = ThreadPriority.AboveNormal
+            };
+            WorkerThread.Start();
+        }
+
+        public override bool IsEmpty()
+        {
+            return toSend.Count == 0;
         }
 
         public override void SendCommand(GCodeCommand command)
