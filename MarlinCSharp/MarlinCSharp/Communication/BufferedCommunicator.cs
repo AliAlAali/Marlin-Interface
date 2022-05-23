@@ -178,15 +178,19 @@ namespace MarlinCSharp.Communication
         public override void Disconnect()
         {
             base.Disconnect();
-            WorkerThread.Join();
+            //WorkerThread.Join();
+            Status = MachineStatus.Manual;
+            WorkerThread.Interrupt();
             ClearQueue();
         }
 
         public override void Halt()
         {
             base.Halt();
+            Status = MachineStatus.Manual;
+            ClearQueue();
             WorkerThread.Interrupt();
-            WorkerThread.Join();
+            //WorkerThread.Join();
             //ResendFrom = -1;
             //ClearQueue();
 
