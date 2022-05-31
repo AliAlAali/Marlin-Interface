@@ -3,7 +3,9 @@ using MarlinCSharp.Communication.Exception;
 using MarlinCSharp.GCode;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 
 namespace MarlinCSharp.Machine
@@ -13,9 +15,47 @@ namespace MarlinCSharp.Machine
         // Private variables
         private bool Online = false;
         private int WriteFails = 0;
+        private Communicator _communicator;
+
 
         // Public variables
-        public Communicator Communicator { get; set; }
+        public event EventHandler<EventArgs> OnPositionChanged;
+
+        public Communicator Communicator
+        {
+            get
+            {
+                return _communicator;
+            }
+
+            set
+            {
+                _communicator = value;
+                _communicator.OnResponseReceived += _communicator_OnResponseReceived;
+            }
+        }
+
+        private void _communicator_OnResponseReceived(string response)
+        {
+             if (response.StartsWith("X:"))
+            {
+                var positionPattern = @"X:([0-9]+\.[0-9]+) Y:([0-9]+\.[0-9]+) Z:([0-9]+\.[0-9]+) E:([0-9]+\.[0-9]+)";
+                var positionMatches = Regex.Match(response, positionPattern);
+
+                if (positionMatches.Groups.Count >= 4)
+                {
+                    float xPos = (float)double.Parse(positionMatches.Groups[1].Value);
+                    float yPos = (float)double.Parse(positionMatches.Groups[2].Value);
+                    float zPos = (float)double.Parse(positionMatches.Groups[3].Value);
+                    float ePos = (float)double.Parse(positionMatches.Groups[4].Value);
+
+                    Position = new PointF(xPos, yPos);
+                    OnPositionChanged?.Invoke(this, new EventArgs());
+                }
+            }
+        }
+
+        public PointF Position { get; set; } = new PointF(0, 0);
 
         public int FeedRate { get; set; } = 1;
 
@@ -55,6 +95,7 @@ namespace MarlinCSharp.Machine
             Online = false;
             WriteFails = 0;
             Ready = false;
+            Position = new Point(0, 0);
 
             Communicator?.Halt();
         }
@@ -65,6 +106,7 @@ namespace MarlinCSharp.Machine
             WriteFails = 0;
             Ready = false;
 
+            Position = new Point(0, 0);
             if (Communicator != null && Communicator.IsConnected())
             {
                 Communicator.Reset();
@@ -76,12 +118,15 @@ namespace MarlinCSharp.Machine
             Online = false;
             WriteFails = 0;
             Ready = false;
+            Position = new Point(0, 0);
+
 
             Communicator?.Clear();
         }
 
         public void Clear()
         {
+            Position = new Point(0, 0);
             Communicator?.Clear();
         }
 
@@ -131,7 +176,7 @@ namespace MarlinCSharp.Machine
         /// <param name="attempts">Number of attempts to check online status</param>
         public void WaitUntilOnline(int timeout, int attempts)
         {
-            if(Communicator == null)
+            if (Communicator == null)
             {
                 throw new CommunicationException("Communicator was not set. Unable to check machine online status");
             }
@@ -162,11 +207,12 @@ namespace MarlinCSharp.Machine
             {
                 WriteFails++;
             }
-            else if(response.StartsWith("ok") || response.Contains("T:"))
+            else if (response.StartsWith("ok") || response.Contains("T:"))
             {
                 Online = true;
                 Ready = true;
             }
+
         }
     }
 }

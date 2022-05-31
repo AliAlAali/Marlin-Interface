@@ -92,6 +92,8 @@ namespace MarlinCSharp.Communication
                             RaiseOnResponseReceived($"Send command {command} #{LineNumber}");
                             LineNumber++;
 
+                           
+
                             Thread.Sleep(50);
                         }
 
