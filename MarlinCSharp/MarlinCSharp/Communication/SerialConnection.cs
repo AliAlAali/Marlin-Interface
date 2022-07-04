@@ -87,7 +87,8 @@ namespace MarlinCSharp.Communication
 
         public override void SendString(string command)
         {
-            Port.WriteLine(command);
+            var data = Encoding.ASCII.GetBytes(command);
+            Port.Write(data, 0, data.Length);
         }
 
 

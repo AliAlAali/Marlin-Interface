@@ -22,7 +22,7 @@ namespace MarlinCSharp.Communication
         Queue toSend = Queue.Synchronized(new Queue());
         Queue ToSendP = Queue.Synchronized(new Queue());
 
-        private int LineNumber = 1;
+        private int LineNumber = 0;
         private int ResendFrom = -1;
 
 
@@ -32,21 +32,26 @@ namespace MarlinCSharp.Communication
 
         private void Work()
         {
+
             Stream stream = null;
             try
             {
                 stream = Connection.GetStream();
-                Writer = new StreamWriter(stream);
+                //Writer = new StreamWriter(stream);
                 Reader = new StreamReader(stream);
 
-                Writer.Write("M110 N0");
-                Writer.Flush();
+                //Writer.Write("M110 N0");
+                //Writer.Flush();
+
+                //var lineSetter = Encoding.ASCII.GetBytes("N-1 M110*15\n");
+                //stream.Write(lineSetter);
 
 
                 while (true)
                 {
                     Thread.Sleep(1); // Cause thread to block for a tiny amount => allows interrupts
                     Task<string> lineTask = Reader.ReadLineAsync();
+                    bool SendOkFlag = true;
 
                     while (!lineTask.IsCompleted)
                     {
@@ -58,49 +63,77 @@ namespace MarlinCSharp.Communication
                         while (ToSendP.Count > 0)
                         {
                             var commandP = ToSendP.Dequeue();
-                            Writer.Write(commandP.ToString());
-                            Writer.Write("\n");
-                            Writer.Flush();
+                            var cbyte = Encoding.ASCII.GetBytes(commandP.ToString() + "\n");
+                            stream.Write(cbyte);
+                            RaiseOnResponseReceived($"Priority command {commandP.ToString()}");
+
+                            //Writer.Write(commandP.ToString());
+                            //Writer.Write("\n");
+                            //Writer.Flush();
                         }
 
-                        if(ResendFrom != -1 && ResendFrom < LineNumber && Status == MachineStatus.Operating)
+                        if (!SendOkFlag)
+                        {
+                            Thread.Sleep(1);
+                            continue;
+                        }
+
+                        SendOkFlag = false;
+
+                        if(ResendFrom > -1 && ResendFrom < LineNumber && Status == MachineStatus.Operating)
                         {
                             if(ResendFrom < Sent.Count)
                             {
                                 // Detect a racing condition, commit suicide
                                 //Thread.Sleep(1000);
                             }
-                            var command = Sent[ResendFrom - 1];
-                            Writer.Write(command.GetCheckedCommand(ResendFrom));
-                            Writer.Write("\n");
-                            Writer.Flush();
+                            var command = Sent[ResendFrom];
 
-                            RaiseOnResponseReceived($"Resent command {command} #{ResendFrom}");
+                            var toBeResent = command.GetCheckedCommand(ResendFrom) + "\n";
+                            var cbyte = Encoding.ASCII.GetBytes(toBeResent);
+                            stream.Write(cbyte);
+                            //stream.Flush();
+
+                            //Writer.Write(command.GetCheckedCommand(ResendFrom));
+                            //Writer.Write("\n");
+                            //Writer.Flush();
+
+                            RaiseOnResponseReceived($"Resent command {toBeResent}");
 
                             ResendFrom++;
-                            Thread.Sleep(10);
+                            Thread.Sleep(1);
                         }
                         else if (toSend.Count > 0 && Status == MachineStatus.Operating)
                         {
+                            
+                            Thread.Sleep(1);
                             ResendFrom = -1;
                             var command = toSend.Dequeue() as GCodeCommand;
-                            Writer.Write(command.GetCheckedCommand(LineNumber));
-                            Writer.Write("\n");
-                            Writer.Flush();
+                            var toBeSent = command.GetCheckedCommand(LineNumber) + "\n";
+                            var cbyte = Encoding.ASCII.GetBytes(toBeSent);
+                            stream.Write(cbyte);
+                            //stream.Flush();
+
+                            //Writer.Write();
+                            //Writer.Write("\n");
+                            //Writer.Flush();
 
                             Sent.Add(command);
-                            RaiseOnResponseReceived($"Send command {command} #{LineNumber}");
+                            RaiseOnResponseReceived($"Send command {toBeSent}");
                             LineNumber++;
 
-                           
 
-                            Thread.Sleep(50);
+                            Thread.Sleep(1);
                         }
 
                     }
 
                     string response = lineTask.Result;
                     RaiseOnResponseReceived(response);
+                    if (response.ToLower().StartsWith("ok"))
+                    {
+                        SendOkFlag = true;
+                    }
 
                     // Handle error or resend command requests
                     if (response.ToLower().StartsWith("resend"))
@@ -109,7 +142,8 @@ namespace MarlinCSharp.Communication
                         string num = response.Substring(startNum + 2);
                         int target = int.Parse(num);
                         ResendFrom = target;
-                        Thread.Sleep(50);
+                        SendOkFlag = true;
+                        Thread.Sleep(1);
                     }
                 }
 

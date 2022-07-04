@@ -13,18 +13,19 @@ namespace MarlinCSharp.GCode
             return Command;
         }
 
-        public int Checksum(int lineNumber)
+        public byte Checksum(int lineNumber)
         {
             string prefix = "N " + lineNumber.ToString();
             string command = prefix + Command;
 
-            int cs = 0;
-            foreach(var c in command.ToCharArray())
+            byte mask = 0xff;
+            byte cs = 0;
+            foreach(var c in Encoding.ASCII.GetBytes(command))
             {
-                cs = cs ^ c;
+                cs = (byte)(cs ^ c);
             }
 
-            return cs & 0xff;
+            return (byte)(cs & mask);
         }
 
         public string GetCheckedCommand(int lineNumber)
