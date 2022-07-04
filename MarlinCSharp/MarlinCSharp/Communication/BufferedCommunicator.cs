@@ -32,7 +32,6 @@ namespace MarlinCSharp.Communication
 
         private void Work()
         {
-
             Stream stream = null;
             try
             {
@@ -80,9 +79,9 @@ namespace MarlinCSharp.Communication
 
                         SendOkFlag = false;
 
-                        if(ResendFrom > -1 && ResendFrom < LineNumber && Status == MachineStatus.Operating)
+                        if (ResendFrom > -1 && ResendFrom < LineNumber && Status == MachineStatus.Operating)
                         {
-                            if(ResendFrom < Sent.Count)
+                            if (ResendFrom < Sent.Count)
                             {
                                 // Detect a racing condition, commit suicide
                                 //Thread.Sleep(1000);
@@ -105,7 +104,7 @@ namespace MarlinCSharp.Communication
                         }
                         else if (toSend.Count > 0 && Status == MachineStatus.Operating)
                         {
-                            
+
                             Thread.Sleep(1);
                             ResendFrom = -1;
                             var command = toSend.Dequeue() as GCodeCommand;
@@ -121,7 +120,6 @@ namespace MarlinCSharp.Communication
                             Sent.Add(command);
                             RaiseOnResponseReceived($"Send command {toBeSent}");
                             LineNumber++;
-
 
                             Thread.Sleep(1);
                         }
@@ -148,7 +146,7 @@ namespace MarlinCSharp.Communication
                 }
 
             }
-            catch(ThreadInterruptedException thiex)
+            catch (ThreadInterruptedException thiex)
             {
                 //Writer.Close();
                 //Writer = null;
@@ -159,7 +157,7 @@ namespace MarlinCSharp.Communication
                 //stream = null;
 
                 // Read all stream to avoid reading old messages
-              
+
 
                 LineNumber = 1;
                 ResendFrom = -1;
@@ -173,7 +171,7 @@ namespace MarlinCSharp.Communication
             {
                 var debug = 5;
             }
-            
+
         }
 
 
