@@ -86,6 +86,9 @@ namespace MarlinCSharp.Communication
                 Connection.Connect();
                 InitalizeThread();
                 EventThread.Start();
+
+                Thread.Sleep(1000);
+                Connection.Write("123456789abcdefg\n");
             }
             else
             {

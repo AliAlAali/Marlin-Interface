@@ -20,6 +20,8 @@ namespace MarlinCSharp.Communication
 
         public abstract Stream GetStream();
 
+        public abstract void Write(string message);
+
         public abstract void Connect();
 
         public abstract void Close();

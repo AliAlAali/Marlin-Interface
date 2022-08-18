@@ -36,6 +36,7 @@ namespace MarlinCSharp.Communication
             }
 
             Port.Open();
+
         }
 
         public override IEnumerable<string> GetOpenPorts()
@@ -95,6 +96,11 @@ namespace MarlinCSharp.Communication
         public override Stream GetStream()
         {
             return Port.BaseStream;
+        }
+
+        public override void Write(string message)
+        {
+            Port.WriteLine(message);
         }
     }
 }
