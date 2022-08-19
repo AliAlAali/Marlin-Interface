@@ -159,7 +159,7 @@ namespace MarlinCSharp.Communication
                 // Read all stream to avoid reading old messages
 
 
-                LineNumber = 1;
+                LineNumber = 0;
                 ResendFrom = -1;
                 ClearQueue();
 
@@ -180,6 +180,7 @@ namespace MarlinCSharp.Communication
             toSend.Clear();
             ToSendP.Clear();
             Sent.Clear();
+            LineNumber = 0;
         }
 
         public override void Reset()
