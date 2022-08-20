@@ -45,6 +45,8 @@ namespace MarlinCSharp.Communication
                 //var lineSetter = Encoding.ASCII.GetBytes("N-1 M110*15\n");
                 //stream.Write(lineSetter);
 
+               
+
 
                 while (true)
                 {
@@ -62,7 +64,7 @@ namespace MarlinCSharp.Communication
                         while (ToSendP.Count > 0)
                         {
                             var commandP = ToSendP.Dequeue();
-                            var cbyte = Encoding.ASCII.GetBytes(commandP.ToString() + "#7865\n");
+                            var cbyte = Encoding.ASCII.GetBytes(commandP.ToString() + GetCommunicationKey() + "\n");
                             stream.Write(cbyte);
                             RaiseOnResponseReceived($"Priority command {commandP.ToString()}");
 
@@ -88,7 +90,7 @@ namespace MarlinCSharp.Communication
                             }
                             var command = Sent[ResendFrom];
 
-                            var toBeResent = command.GetCheckedCommand(ResendFrom) + "#7865\n";
+                            var toBeResent = command.GetCheckedCommand(ResendFrom) + GetCommunicationKey() + "\n";
                             var cbyte = Encoding.ASCII.GetBytes(toBeResent);
                             stream.Write(cbyte);
                             //stream.Flush();
@@ -108,7 +110,7 @@ namespace MarlinCSharp.Communication
                             Thread.Sleep(1);
                             ResendFrom = -1;
                             var command = toSend.Dequeue() as GCodeCommand;
-                            var toBeSent = command.GetCheckedCommand(LineNumber) + "#7865\n";
+                            var toBeSent = command.GetCheckedCommand(LineNumber) + GetCommunicationKey() + "\n";
                             var cbyte = Encoding.ASCII.GetBytes(toBeSent);
                             stream.Write(cbyte);
                             //stream.Flush();
@@ -249,6 +251,11 @@ namespace MarlinCSharp.Communication
         public override void SendPrioityCommand(string command)
         {
             ToSendP.Enqueue(command);
+        }
+
+        private string GetCommunicationKey()
+        {
+            return string.IsNullOrEmpty(CommunicationKey) ? "" : "#" + CommunicationKey;
         }
 
     }

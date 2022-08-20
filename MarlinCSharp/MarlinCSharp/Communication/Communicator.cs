@@ -16,6 +16,10 @@ namespace MarlinCSharp.Communication
     {
         public Connection Connection { get; set; }
 
+        public string SerialKey { get; set; }
+
+        public string CommunicationKey { get; set; }
+
         public bool Paused { get; set; } = false;
 
         public MachineStatus Status { get; set; } = MachineStatus.Manual;
@@ -87,8 +91,11 @@ namespace MarlinCSharp.Communication
                 InitalizeThread();
                 EventThread.Start();
 
-                Thread.Sleep(1000);
-                Connection.Write("123456789abcdefg\n");
+                if (!string.IsNullOrEmpty(SerialKey))
+                {
+                    Thread.Sleep(1000);
+                    Connection.Write(SerialKey + "\n");
+                }
             }
             else
             {
